@@ -95,7 +95,37 @@ const TShirtCustomizer = () => {
       setSelectedElement(element);
     }
   };
+  const handleSaveDesign = async () => {
+    try {
+      setLoading(true);
+      // Add your save logic here
+      const response = await api.saveDesign({
+        elements,
+        tshirtColor,
+      });
+      // Handle success
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const handleGenerateMockup = async () => {
+    try {
+      setLoading(true);
+      // Add your mockup generation logic here
+      const response = await api.generateMockup({
+        elements,
+        tshirtColor,
+      });
+      // Handle success
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="flex flex-col min-h-screen">
       <div className="container mx-auto px-4 py-8">
@@ -167,6 +197,9 @@ const TShirtCustomizer = () => {
               selectedElement={selectedElement}
               onElementSelect={handleElementSelect}
               onElementUpdate={handleElementUpdate}
+              onSaveDesign={handleSaveDesign}  
+              onGenerateMockup={handleGenerateMockup}  
+              loading={loading}
             />
           </div>
         </div>

@@ -6,7 +6,10 @@ const DesignPreview = ({
   elements,
   selectedElement,
   onElementSelect,
-  onElementUpdate
+  onElementUpdate,
+  handleSaveDesign,  
+  handleGenerateMockup,  
+  loading
 }) => {
   const canvasRef = useRef(null);
   const isDragging = useRef(false);
@@ -238,8 +241,9 @@ const DesignPreview = ({
     isDragging.current = false;
   };
 
+
   return (
-    <div className="relative">
+    <div className="relative flex flex-col">
       <canvas
         ref={canvasRef}
         width={400}
@@ -252,6 +256,7 @@ const DesignPreview = ({
         onDoubleClick={handleDoubleClick}
       />
       
+      {/* Controls for selected element */}
       {selectedElement && (
         <div className="absolute top-2 right-2 bg-white p-2 rounded shadow">
           <button 
@@ -289,6 +294,25 @@ const DesignPreview = ({
           </button>
         </div>
       )}
+
+      {/* Save and Generate Mockup Buttons */}
+      <div className="mt-4 space-y-4">
+        <button
+          onClick={handleSaveDesign}
+          className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+          disabled={loading}
+        >
+          {loading ? 'Saving...' : 'Save Design'}
+        </button>
+
+        <button
+          onClick={handleGenerateMockup}
+          className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
+          disabled={loading}
+        >
+          {loading ? 'Generating...' : 'Generate Mockup'}
+        </button>
+      </div>
     </div>
   );
 };
