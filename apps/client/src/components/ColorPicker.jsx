@@ -1,12 +1,22 @@
 import React from 'react';
 
-const ColorPicker = ({ color, onChange }) => {
-  const colors = [
-    '#ffffff', '#000000', '#ff0000', '#00ff00', '#0000ff',
-    '#ffff00', '#ff00ff', '#00ffff', '#808080', '#800000'
-  ];
+// const ColorPicker = ({ color, onChange }) => {
+//   const colors = [
+//     '#ffffff', '#000000', '#ff0000', '#00ff00', '#0000ff',
+//     '#ffff00', '#ff00ff', '#00ffff', '#808080', '#800000'
+//   ];
 
-  return (
+
+
+const ColorPicker=({color,onChange})=>{
+
+const colors=[
+  '#ffffff', '#000000', '#ff0000', '#00ff00', '#0000ff',
+     '#ffff00', '#ff00ff', '#00ffff', '#808080', '#800000'
+]
+
+
+return (
     <div className="space-y-2">
       <label className="block text-sm font-medium">T-Shirt Color</label>
       <div className="flex flex-wrap gap-2">

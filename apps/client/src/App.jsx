@@ -1,6 +1,6 @@
 
 
-import TshirtCustomiser from './components/TshirtCustomiser';
+import TshirtCustomizer from './components/TshirtCustomizer';
 import { ThemeProvider } from './context/context';
 import './styles/globals.css';
 
@@ -15,7 +15,7 @@ const App = () => {
         </header>
         
         <main className="container mx-auto px-4 py-8">
-          <TshirtCustomiser />
+          <TshirtCustomizer />
         </main>
 
         <footer className="border-t mt-auto">

@@ -1,5 +1,4 @@
 
-
 import React, { useRef, useEffect } from 'react';
 
 const DesignPreview = ({
@@ -13,38 +12,137 @@ const DesignPreview = ({
   const isDragging = useRef(false);
   const lastPosition = useRef({ x: 0, y: 0 });
 
+  const drawTShirt = (ctx) => {
+    const canvas = ctx.canvas;
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Set t-shirt color
+    ctx.fillStyle = tshirtColor;
+
+    // Begin t-shirt path
+    ctx.beginPath();
+
+    // Collar
+    ctx.moveTo(width * 0.35, height * 0.1); 
+    ctx.quadraticCurveTo(width * 0.5, height * 0.05, width * 0.65, height * 0.1); // Neck curve
+
+    // Shoulders
+    ctx.lineTo(width * 0.8, height * 0.15); 
+    ctx.lineTo(width * 0.9, height * 0.3); 
+
+    // Right side
+    ctx.lineTo(width * 0.85, height * 0.45); 
+    ctx.lineTo(width * 0.8, height * 0.45); 
+    ctx.lineTo(width * 0.8, height * 0.9); 
+
+    // Bottom
+    ctx.quadraticCurveTo(width * 0.5, height * 0.95, width * 0.2, height * 0.9);
+
+    // Left side
+    ctx.lineTo(width * 0.2, height * 0.45); // Left body
+    ctx.lineTo(width * 0.15, height * 0.45); // Left sleeve bottom
+    ctx.lineTo(width * 0.1, height * 0.3); // Left sleeve
+    ctx.lineTo(width * 0.2, height * 0.15); // Left shoulder
+    ctx.closePath();
+
+    // Fill t-shirt
+    ctx.fill();
+
+    // Add shadows for depth
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Add collar detail
+    ctx.beginPath();
+    ctx.moveTo(width * 0.4, height * 0.11);
+    ctx.quadraticCurveTo(width * 0.5, height * 0.09, width * 0.6, height * 0.11);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  };
+
+  const handleDoubleClick = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Find clicked text element
+    const clickedText = elements.find(element => {
+      if (element.type === 'text') {
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.font = `${element.fontSize}px ${element.fontFamily}`;
+        const metrics = ctx.measureText(element.content);
+        
+        const centerX = element.position.x;
+        const centerY = element.position.y;
+        const width = metrics.width * element.scale;
+        const height = element.fontSize * element.scale;
+        
+        return x >= centerX - width/2 - 10 &&
+               x <= centerX + width/2 + 10 &&
+               y >= centerY - height/2 - 10 &&
+               y <= centerY + height/2 + 10;
+      }
+      return false;
+    });
+
+    if (clickedText) {
+      onElementSelect(clickedText);
+    }
+  };
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
 
     const drawElements = async () => {
-      // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw t-shirt background
-      ctx.fillStyle = tshirtColor;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Draw t-shirt first
+      drawTShirt(ctx);
 
       // Draw elements
       for (const element of elements) {
+        ctx.save();
+        
         if (element.type === 'text') {
-          ctx.save();
+          // Set up text properties
           ctx.translate(element.position.x, element.position.y);
           ctx.rotate((element.rotation * Math.PI) / 180);
           ctx.scale(element.scale, element.scale);
           
+          // Configure text style
           ctx.font = `${element.fontSize}px ${element.fontFamily}`;
           ctx.fillStyle = element.color;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          
+          // Draw text
           ctx.fillText(element.content, 0, 0);
-          ctx.restore();
+          
+          // Draw selection border if element is selected
+          if (selectedElement && selectedElement.id === element.id) {
+            const metrics = ctx.measureText(element.content);
+            const height = element.fontSize;
+            
+            ctx.strokeStyle = '#0000ff';
+            ctx.lineWidth = 1 / element.scale;
+            ctx.setLineDash([5 / element.scale]);
+            ctx.strokeRect(
+              -metrics.width / 2 - 5,
+              -height / 2 - 5,
+              metrics.width + 10,
+              height + 10
+            );
+          }
         } else if (element.type === 'image') {
           try {
-            // Create full URL for the image
             const imageUrl = `http://localhost:9090/${element.content}`;
-            
-            // Create and load image
             const img = new Image();
-            img.crossOrigin = 'anonymous'; // Enable CORS
+            img.crossOrigin = 'anonymous';
             
             await new Promise((resolve, reject) => {
               img.onload = resolve;
@@ -52,44 +150,66 @@ const DesignPreview = ({
               img.src = imageUrl;
             });
 
-            // Draw image
-            ctx.save();
             ctx.translate(element.position.x, element.position.y);
             ctx.rotate((element.rotation * Math.PI) / 180);
             ctx.scale(element.scale, element.scale);
             ctx.drawImage(img, -img.width / 2, -img.height / 2);
-            ctx.restore();
           } catch (error) {
             console.error('Error loading image:', error);
           }
         }
+        
+        ctx.restore();
       }
     };
 
     drawElements();
-  }, [tshirtColor, elements]);
+  }, [tshirtColor, elements, selectedElement]);
 
   const handleMouseDown = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Find clicked element
+    // Find clicked element (checking text elements)
     const clicked = elements.find(element => {
-      const bounds = {
-        left: element.position.x - 25,
-        right: element.position.x + 25,
-        top: element.position.y - 25,
-        bottom: element.position.y + 25
-      };
-      return x >= bounds.left && x <= bounds.right && 
-             y >= bounds.top && y <= bounds.bottom;
+      if (element.type === 'text') {
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.font = `${element.fontSize}px ${element.fontFamily}`;
+        const metrics = ctx.measureText(element.content);
+        
+        // Calculate bounds considering rotation and scale
+        const centerX = element.position.x;
+        const centerY = element.position.y;
+        const width = metrics.width * element.scale;
+        const height = element.fontSize * element.scale;
+        
+        // Simple rectangular bounds check
+        return x >= centerX - width/2 - 10 &&
+               x <= centerX + width/2 + 10 &&
+               y >= centerY - height/2 - 10 &&
+               y <= centerY + height/2 + 10;
+      } else if (element.type === 'image') {
+        // Add image click detection
+        const centerX = element.position.x;
+        const centerY = element.position.y;
+        const width = 100 * element.scale;
+        const height = 100 * element.scale;
+
+        return x >= centerX - width/2 &&
+               x <= centerX + width/2 &&
+               y >= centerY - height/2 &&
+               y <= centerY + height/2;
+      }
+      return false;
     });
 
     if (clicked) {
       onElementSelect(clicked);
       isDragging.current = true;
       lastPosition.current = { x, y };
+    } else {
+      onElementSelect(null);
     }
   };
 
@@ -129,9 +249,9 @@ const DesignPreview = ({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onDoubleClick={handleDoubleClick}
       />
       
-      {/* Optional: Add controls for selected element */}
       {selectedElement && (
         <div className="absolute top-2 right-2 bg-white p-2 rounded shadow">
           <button 
@@ -152,9 +272,20 @@ const DesignPreview = ({
                 scale: Math.max(0.1, selectedElement.scale - 0.1)
               });
             }}
-            className="p-1 bg-blue-500 text-white rounded"
+            className="p-1 bg-blue-500 text-white rounded mr-2"
           >
             Zoom Out
+          </button>
+          <button 
+            onClick={() => {
+              onElementUpdate({
+                ...selectedElement,
+                rotation: (selectedElement.rotation + 15) % 360
+              });
+            }}
+            className="p-1 bg-blue-500 text-white rounded"
+          >
+            Rotate
           </button>
         </div>
       )}
