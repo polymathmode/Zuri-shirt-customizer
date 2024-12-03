@@ -1,68 +1,8 @@
-// // src/services/api.js
-// const API_BASE_URL = 'http://localhost:5000/api';
 
-// export const api = {
-//   // Upload logo image
-//   uploadLogo: async (file) => {
-//     const formData = new FormData();
-//     formData.append('logo', file);
+const API_BASE_URL =process.env.NODE_ENV==="production"
+ ? "/api"
+ :'http://localhost:9090/api';
 
-//     try {
-//       const response = await fetch(`${API_BASE_URL}/upload-logo`, {
-//         method: 'POST',
-//         body: formData,
-//       });
-//       return await response.json();
-//     } catch (error) {
-//       throw new Error('Error uploading logo: ' + error.message);
-//     }
-//   },
-
-//   // Get preset designs
-//   getPresetDesigns: async () => {
-//     try {
-//       const response = await fetch(`${API_BASE_URL}/preset-designs`);
-//       return await response.json();
-//     } catch (error) {
-//       throw new Error('Error fetching preset designs: ' + error.message);
-//     }
-//   },
-
-//   // Save user design
-//   saveDesign: async (designData) => {
-//     try {
-//       const response = await fetch(`${API_BASE_URL}/save-design`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(designData),
-//       });
-//       return await response.json();
-//     } catch (error) {
-//       throw new Error('Error saving design: ' + error.message);
-//     }
-//   },
-
-//   // Generate mockup
-//   generateMockup: async (designData) => {
-//     try {
-//       const response = await fetch(`${API_BASE_URL}/generate-mockup`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(designData),
-//       });
-//       return await response.json();
-//     } catch (error) {
-//       throw new Error('Error generating mockup: ' + error.message);
-//     }
-//   }
-// };
-
-// src/services/api.js
-const API_BASE_URL = 'http://localhost:9090/api';
 
 const handleResponse = async (response) => {
   if (!response.ok) {
