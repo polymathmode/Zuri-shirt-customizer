@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "cd apps/server && yarn install && node index.js",
-    "build": "cd apps/client && yarn install && yarn build && cd ../server && yarn install && cp -r ../client/build ."
+    "build": "cd apps/client && yarn install && yarn build && cd ../server && yarn install"
   },
   
   "engines": {
