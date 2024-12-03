@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "cd apps/server && node index.js",
+    "start": "cd apps/server && yarn install && node index.js",
     "build": "cd apps/server && yarn install && cd ../client && yarn install && yarn build"
   },
   
@@ -12,3 +12,5 @@
     "node": ">=14.0.0"
   }
 }
+
+
