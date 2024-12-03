@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "scripts": {
+   "scripts": {
     "start": "cd apps/server && yarn install && node index.js",
-    "build": "cd apps/server && yarn install && cd ../client && yarn install && yarn build"
+    "build": "cd apps/client && yarn install && yarn build && cp -r build ../server/build && cd ../server && yarn install"
   },
   
   "engines": {
