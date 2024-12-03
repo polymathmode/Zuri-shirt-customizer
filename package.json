@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "scripts": {
-    "start": "cd apps/server && yarn install && node index.js",
+ "scripts": {
+    "start": "cd apps/server && node index.js",
     "build": "cd apps/client && yarn install && yarn build && cd ../server && yarn install"
   },
   

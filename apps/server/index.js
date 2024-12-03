@@ -38,15 +38,17 @@ app.use(errorHandler);
 //     res.sendFile(path.join(__dirname, './build/index.html'));
 //   });
 // }
+
+
 if (process.env.NODE_ENV === 'production') {
-  const buildPath = path.join(process.cwd(), 'apps/client/build');
+  const buildPath = path.join(__dirname, '../../apps/client/build');
   app.use(express.static(buildPath));
   app.get('*', (req, res) => {
     res.sendFile(path.join(buildPath, 'index.html'));
   });
 }
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 9090;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
