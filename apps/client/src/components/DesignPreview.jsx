@@ -174,7 +174,6 @@ const DesignPreview = ({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Find clicked element (checking text elements)
     const clicked = elements.find(element => {
       if (element.type === 'text') {
         const ctx = canvasRef.current.getContext('2d');
