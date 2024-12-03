@@ -4,9 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node server.js",
+    "start": "node index.js",
     "build": "cd client && yarn install && yarn build",
-    "dev": "nodemon server.js"
+    "dev": "nodemon index.js"
   },
   "engines": {
     "node": ">=14.0.0"
