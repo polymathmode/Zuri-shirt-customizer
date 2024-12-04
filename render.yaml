@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: Zuri-shirt-customizer
+    env: node
+    buildCommand: yarn install
+    startCommand: cd apps/server && yarn install && node index.js
+    autoDeploy: true
+    branch: main
