@@ -491,7 +491,6 @@ const DesignPreview = ({
       // Draw t-shirt first
       await drawTShirt(ctx);
 
-      // Draw elements
       for (const element of elements) {
         ctx.save();
         
